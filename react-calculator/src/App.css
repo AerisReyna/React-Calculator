@@ -1,7 +1,16 @@
+/* Colors 
+  darkblue: 3d5a80
+  skyblue: 98c1d9
+  lightblue: e0fbfc
+  reddish: ee6c4d
+  black: 293241
+*/
+
 html {
   display: flex;
   justify-content: center;
   padding: 10px;
+  color: #98c1d9;
 }
 
 body {
@@ -13,8 +22,9 @@ html, body, #root {
 }
 
 .calculator {
+  border: 2px solid #293241;
+  background-color: #3d5a80;
   height: inherit ;
-  text-align: center;
   display: flex;
   flex-direction: column;
 } 
@@ -22,39 +32,44 @@ html, body, #root {
 .display {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: space-evenly;
   flex-grow: 2;
-  background-color: yellow;
 }
 
 .display-input {
+  height: 100%;
+  width: 100%;
+  background-color: #3d5a80;
+  color: #98c1d9;
   align-self: flex-end;
+  font-size: 5vw;
 }
 
 .display-result {
+  height: 100%;
+  width: 100%;
+  color: #98c1d9;
+  background-color: #293241;
   align-self: flex-end;
+  font-size: 2vw;
 }
 
 .toolbar {
   display: flex;
-  background-color: blue;
+  background-color: #e0fbfc;
   justify-content: space-around;
 }
 
-.divider {
-  background-color: black;
-  height: 10px;
-}
-
 .inputs {
-  background-color: green;
+  background-color: #e0fbfc;
   flex-grow: 3;
   display: grid;
   grid-template: 1fr 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr;
   gap: 15px;
 }
 
-.btn-input {
-  color: red;
+.btn-input, button {
+  color: #e0fbfc;
+  border: 2px solid #293241;
+  background-color: #3d5a80;
 }
