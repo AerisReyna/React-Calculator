@@ -21,11 +21,11 @@ class Toolbar extends React.Component {
   render() {
     return (
       <div className="toolbar">
-        <button className="btn-toolbar btn-settings" value="settings"><FaCog/></button>
-        <button className="btn-toolbar btn-history" value="history"><FaHistory/></button>
-        <button className="btn-toolbar btn-convert" value="convert"><FaRetweet/></button>
-        <button className="btn-toolbar btn-mode" value="mode"><FaAtom/></button>
-        <button className="btn-toolbar btn-backspace" value="backspace"><FaBackspace/></button>
+        <button className="btn-toolbar btn-settings" value="settings" onClick={this.props.handleButtonPress}><FaCog/></button>
+        <button className="btn-toolbar btn-history" value="history" onClick={this.props.handleButtonPress}><FaHistory/></button>
+        <button className="btn-toolbar btn-convert" value="convert" onClick={this.props.handleButtonPress}><FaRetweet/></button>
+        <button className="btn-toolbar btn-mode" value="mode" onClick={this.props.handleButtonPress}><FaAtom/></button>
+        <button className="btn-toolbar btn-backspace" value="backspace" onClick={this.props.handleButtonPress}><FaBackspace/></button>
       </div>
     );
   }
@@ -91,7 +91,7 @@ class Calculator extends React.Component {
     return (
       <div className="calculator">
         <Display input={this.state.input}/>
-        <Toolbar />
+        <Toolbar handleButtonPress={this.handleButtonPress}/>
         <Inputs handleButtonPress={this.handleButtonPress}/>
       </div>
     );
