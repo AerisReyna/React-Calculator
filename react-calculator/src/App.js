@@ -82,7 +82,7 @@ class Calculator extends React.Component {
   }
   
   handleButtonPress(e) {
-    var keyPressed = e.target.getAttribute('name');
+    var keyPressed = e.target.getAttribute('value');
     
     
     this.setState({
