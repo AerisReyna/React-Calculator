@@ -7,10 +7,10 @@ class Display extends React.Component {
     return(
       <div className="display">
         <div className="display-input">
-          7+7
+          {this.props.input}
         </div>
         <div className="display-result">
-          49
+          null
         </div>
       </div>
     );
@@ -35,26 +35,26 @@ class Inputs extends React.Component {
   render() {
     return (
       <div className="inputs">
-        <button className="btn-input" value="( )">( )</button>
-        <button className="btn-input" value="%">%</button>
-        <button className="btn-input" value="/">/</button>
-        <button className="btn-input" value="C">C</button>
-        <button className="btn-input" value="7">7</button>
-        <button className="btn-input" value="8">8</button>
-        <button className="btn-input" value="9">9</button>
-        <button className="btn-input" value="*">*</button>
-        <button className="btn-input" value="4">4</button>
-        <button className="btn-input" value="5">5</button>
-        <button className="btn-input" value="6">6</button>
-        <button className="btn-input" value="-">-</button>
-        <button className="btn-input" value="1">1</button>
-        <button className="btn-input" value="2">2</button>
-        <button className="btn-input" value="3">3</button>
-        <button className="btn-input" value="+">+</button>
-        <button className="btn-input" value="+/-">+/-</button>
-        <button className="btn-input" value="0">0</button>
-        <button className="btn-input" value=".">.</button>
-        <button className="btn-input" value="=">=</button>
+        <button className="btn-input" value="( )" onClick={this.props.handleButtonPress}>( )</button>
+        <button className="btn-input" value="%"onClick={this.props.handleButtonPress}>%</button>
+        <button className="btn-input" value="/"onClick={this.props.handleButtonPress}>/</button>
+        <button className="btn-input" value="C"onClick={this.props.handleButtonPress}>C</button>
+        <button className="btn-input" value="7"onClick={this.props.handleButtonPress}>7</button>
+        <button className="btn-input" value="8"onClick={this.props.handleButtonPress}>8</button>
+        <button className="btn-input" value="9"onClick={this.props.handleButtonPress}>9</button>
+        <button className="btn-input" value="*"onClick={this.props.handleButtonPress}>*</button>
+        <button className="btn-input" value="4"onClick={this.props.handleButtonPress}>4</button>
+        <button className="btn-input" value="5"onClick={this.props.handleButtonPress}>5</button>
+        <button className="btn-input" value="6"onClick={this.props.handleButtonPress}>6</button>
+        <button className="btn-input" value="-"onClick={this.props.handleButtonPress}>-</button>
+        <button className="btn-input" value="1"onClick={this.props.handleButtonPress}>1</button>
+        <button className="btn-input" value="2"onClick={this.props.handleButtonPress}>2</button>
+        <button className="btn-input" value="3"onClick={this.props.handleButtonPress}>3</button>
+        <button className="btn-input" value="+"onClick={this.props.handleButtonPress}>+</button>
+        <button className="btn-input" value="+/-"onClick={this.props.handleButtonPress}>+/-</button>
+        <button className="btn-input" value="0"onClick={this.props.handleButtonPress}>0</button>
+        <button className="btn-input" value="."onClick={this.props.handleButtonPress}>.</button>
+        <button className="btn-input" value="="onClick={this.props.handleButtonPress}>=</button>
       </div>
     );
   }
@@ -72,12 +72,27 @@ class Inputs extends React.Component {
 // }
 
 class Calculator extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      input: "",
+      lastKey: "",
+    }
+    this.handleButtonPress = this.handleButtonPress.bind(this);
+  }
+  
+  handleButtonPress(e) {
+    this.setState({
+      input: this.state.input + e.target.value,
+      lastKey: e.target.value,
+    });
+  }
   render() {
     return (
       <div className="calculator">
-        <Display />
+        <Display input={this.state.input}/>
         <Toolbar />
-        <Inputs />
+        <Inputs handleButtonPress={this.handleButtonPress}/>
       </div>
     );
   }
