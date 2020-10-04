@@ -21,7 +21,7 @@ class Toolbar extends React.Component {
   render() {
     return (
       <div className="toolbar">
-        <button className="btn-toolbar btn-settings" value="settings" onClick={this.props.handleButtonPress}><FaCog/></button>
+        <button className="btn-toolbar btn-settings" name="settings" value="settings" onClick={this.props.handleButtonPress}><FaCog/></button>
         <button className="btn-toolbar btn-history" value="history" onClick={this.props.handleButtonPress}><FaHistory/></button>
         <button className="btn-toolbar btn-convert" value="convert" onClick={this.props.handleButtonPress}><FaRetweet/></button>
         <button className="btn-toolbar btn-mode" value="mode" onClick={this.props.handleButtonPress}><FaAtom/></button>
@@ -82,15 +82,12 @@ class Calculator extends React.Component {
   }
   
   handleButtonPress(e) {
-    var keyPressed = e.target.value;
-    switch(keyPressed) {
-      case 
-    }
+    var keyPressed = e.target.name;
     
     
     this.setState({
-      input: this.state.input + e.target.value,
-      lastKey: e.target.value,
+      input: this.state.input + e.target.name,
+      lastKey: e.target.name,
     });
   }
   render() {
