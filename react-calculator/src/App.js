@@ -35,10 +35,10 @@ class Inputs extends React.Component {
   render() {
     return (
       <div className="inputs">
+        <button className="btn-input" value="C"onClick={this.props.handleButtonPress}>C</button>
         <button className="btn-input" value="( )" onClick={this.props.handleButtonPress}>( )</button>
         <button className="btn-input" value="%"onClick={this.props.handleButtonPress}>%</button>
         <button className="btn-input" value="/"onClick={this.props.handleButtonPress}>/</button>
-        <button className="btn-input" value="C"onClick={this.props.handleButtonPress}>C</button>
         <button className="btn-input" value="7"onClick={this.props.handleButtonPress}>7</button>
         <button className="btn-input" value="8"onClick={this.props.handleButtonPress}>8</button>
         <button className="btn-input" value="9"onClick={this.props.handleButtonPress}>9</button>
@@ -77,7 +77,7 @@ class Calculator extends React.Component {
     this.state = {
       input: "0",
       inputHistory: [],
-      lastKey: "",
+      lastKey: "0",
       leftParenthesis: false,
       doubleZeroOkay: false,
       // This is false after an operator has been entered and true upon the first nonzero int
@@ -94,7 +94,7 @@ class Calculator extends React.Component {
     // One - gets a negative. Hitting it again switches the operator
     
     switch(keyPressed) {
-      case '0': {
+      case '0':
         if (!(this.state.doubleZeroOkay) && (this.state.lastKey === keyPressed)) {
           break;
         }
@@ -102,23 +102,40 @@ class Calculator extends React.Component {
           input: this.state.input + keyPressed,
           lastKey: keyPressed,
         });
-      }
       break;
-      case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case'9': {
+      case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case'9':
+        if (this.state.input === "0") {
+          this.setState({
+            input: keyPressed,
+            lastKey: keyPressed,
+          });
+          if (keyPressed !== '0') {
+            this.setState({
+              doubleZeroOkay: true,
+            });
+          }
+          break;
+        }
         this.setState({
           input: this.state.input + keyPressed,
           lastKey: keyPressed,
           doubleZeroOkay: true,
         });
-      }
       break;
-    default: {
-      this.setState({
-        input: this.state.input + keyPressed,
-        lastKey: keyPressed,
-      });
+      case '+': case '-': case '*': case '/':
+        this.setState({
+          
+        });
+      break;
+      default: {
+        this.setState({
+          input: this.state.input + keyPressed,
+          lastKey: keyPressed,
+        });
+      }
     }
   }
+
   render() {
     return (
       <div className="calculator">
