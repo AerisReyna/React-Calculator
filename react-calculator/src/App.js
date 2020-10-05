@@ -92,26 +92,23 @@ class Calculator extends React.Component {
   
   handleButtonPress(e) {
     var keyPressed = e.target.getAttribute('value');
-    // One - gets a negative. Hitting it again switches the operator
     
     switch(keyPressed) {
       case '0':
+        // Ignore input in the cases where adding another zero wouldn't make sense.
         if (!(this.state.doubleZeroOkay) && (this.state.lastKey === keyPressed)) {
           return;
         }
         break;
       case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case'9':
+        // Replaces the zero in contexts where the zero is unnecessary.
         if (this.state.lastKey === "0" && !this.state.doubleZeroOkay) {
           var editedInput = this.state.input.slice(0, this.state.input.length - 1)
           this.setState({
             input: editedInput + keyPressed,
             lastKey: keyPressed,
+            doubleZeroOkay: true,
           });
-          if (keyPressed !== '0') {
-            this.setState({
-              doubleZeroOkay: true,
-            });
-          }
           return;
         }
         this.setState({
