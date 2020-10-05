@@ -80,6 +80,7 @@ class Calculator extends React.Component {
       lastKey: "0",
       leftParenthesis: false,
       doubleZeroOkay: false,
+      decimalUsed: false,
       // This is false after an operator has been entered and true upon the first nonzero int
     }
     this.handleButtonPress = this.handleButtonPress.bind(this);
@@ -118,15 +119,36 @@ class Calculator extends React.Component {
         });
         break;
       case '.':
+        if (this.state.lastKey === "." || this.state.decimalUsed) {
+          return;
+        }
         this.setState({
           doubleZeroOkay: true,
+          decimalUsed: true,
         });
         break;
-      case '+': case '-': case '*': case '/': 
+      case '+': case '-': case '*': case '/':
+        if (this.state.lastKey === "*" || this.state.lastKey === "/" || this.state.lastKey === "+" || this.state.lastKey === "-") {
+          this.setState({
+            input: this.state.input.slice(0, this.state.input.length - 1) + keyPressed,
+            lastKey: keyPressed,
+          });
+          return;
+        }
         this.setState({
-          doubleZeroOkay: false
+          doubleZeroOkay: false,
+          decimalUsed: false,
         });
         break;
+      case 'C':
+
+      case "( )":
+
+      case "%":
+
+      case "+/-":
+
+      case "=":
     }
     this.setState({
       input: this.state.input + keyPressed,
