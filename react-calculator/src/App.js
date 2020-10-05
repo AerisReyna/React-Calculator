@@ -109,13 +109,16 @@ class Calculator extends React.Component {
             lastKey: keyPressed,
             doubleZeroOkay: true,
           });
+          // Returns here because this is different than default behavior.
           return;
         }
+        // Multiple zeroes are always okay after a number has been pressed.
         this.setState({
           doubleZeroOkay: true,
         });
         break;
       case '.':
+        // Ignores input when a decimal has already been put in.
         if (this.state.lastKey === "." || this.state.decimalUsed) {
           return;
         }
@@ -125,6 +128,7 @@ class Calculator extends React.Component {
         });
         break;
       case '+': case '-': case '*': case '/':
+        // Operators are replaced with new ones when they are input in succession.
         if (this.state.lastKey === "*" || this.state.lastKey === "/" || this.state.lastKey === "+" || this.state.lastKey === "-") {
           this.setState({
             input: this.state.input.slice(0, this.state.input.length - 1) + keyPressed,
