@@ -142,9 +142,9 @@ class Calculator extends React.Component {
         });
         break;
       case 'C':
-
+        break;
       case "( )":
-
+        break;
       case "%":
 
       case "+/-":
