@@ -96,17 +96,14 @@ class Calculator extends React.Component {
     switch(keyPressed) {
       case '0':
         if (!(this.state.doubleZeroOkay) && (this.state.lastKey === keyPressed)) {
-          break;
+          return;
         }
-        this.setState({
-          input: this.state.input + keyPressed,
-          lastKey: keyPressed,
-        });
-      break;
+        break;
       case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case'9':
-        if (this.state.input === "0") {
+        if (this.state.lastKey === "0" && !this.state.doubleZeroOkay) {
+          var editedInput = this.state.input.slice(0, this.state.input.length - 1)
           this.setState({
-            input: keyPressed,
+            input: editedInput + keyPressed,
             lastKey: keyPressed,
           });
           if (keyPressed !== '0') {
@@ -114,26 +111,27 @@ class Calculator extends React.Component {
               doubleZeroOkay: true,
             });
           }
-          break;
+          return;
         }
         this.setState({
-          input: this.state.input + keyPressed,
-          lastKey: keyPressed,
           doubleZeroOkay: true,
         });
-      break;
-      case '+': case '-': case '*': case '/':
+        break;
+      case '.':
         this.setState({
-          
+          doubleZeroOkay: true,
         });
-      break;
-      default: {
+        break;
+      case '+': case '-': case '*': case '/': 
         this.setState({
-          input: this.state.input + keyPressed,
-          lastKey: keyPressed,
+          doubleZeroOkay: false
         });
-      }
+        break;
     }
+    this.setState({
+      input: this.state.input + keyPressed,
+      lastKey: keyPressed,
+    });
   }
 
   render() {
