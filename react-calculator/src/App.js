@@ -75,20 +75,49 @@ class Calculator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      input: "",
+      input: "0",
+      inputHistory: [],
       lastKey: "",
+      leftParenthesis: false,
+      doubleZeroOkay: false,
+      // This is false after an operator has been entered and true upon the first nonzero int
     }
     this.handleButtonPress = this.handleButtonPress.bind(this);
   }
   
+  processInput() {
+    // first pass for parentheses, second for division/multiplication, final pass fir addition/substraction. All left to right.
+  }
+  
   handleButtonPress(e) {
     var keyPressed = e.target.getAttribute('value');
+    // One - gets a negative. Hitting it again switches the operator
     
-    
-    this.setState({
-      input: this.state.input + keyPressed,
-      lastKey: keyPressed,
-    });
+    switch(keyPressed) {
+      case '0': {
+        if (!(this.state.doubleZeroOkay) && (this.state.lastKey === keyPressed)) {
+          break;
+        }
+        this.setState({
+          input: this.state.input + keyPressed,
+          lastKey: keyPressed,
+        });
+      }
+      break;
+      case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case'9': {
+        this.setState({
+          input: this.state.input + keyPressed,
+          lastKey: keyPressed,
+          doubleZeroOkay: true,
+        });
+      }
+      break;
+    default: {
+      this.setState({
+        input: this.state.input + keyPressed,
+        lastKey: keyPressed,
+      });
+    }
   }
   render() {
     return (
