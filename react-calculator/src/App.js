@@ -21,11 +21,11 @@ class Toolbar extends React.Component {
   render() {
     return (
       <div className="toolbar">
-        <button className="btn-toolbar btn-settings" name="settings" value="settings" onClick={this.props.handleButtonPress}><FaCog/></button>
-        <button className="btn-toolbar btn-history" value="history" onClick={this.props.handleButtonPress}><FaHistory/></button>
-        <button className="btn-toolbar btn-convert" value="convert" onClick={this.props.handleButtonPress}><FaRetweet/></button>
-        <button className="btn-toolbar btn-mode" value="mode" onClick={this.props.handleButtonPress}><FaAtom/></button>
-        <button className="btn-toolbar btn-backspace" value="backspace" onClick={this.props.handleButtonPress}><FaBackspace/></button>
+        <button className="btn-toolbar btn-settings" name="settings" value="settings" onClick={this.props.handleButtonPress}><FaCog className="fa"/></button>
+        <button className="btn-toolbar btn-history" value="history" onClick={this.props.handleButtonPress}><FaHistory className="fa"/></button>
+        <button className="btn-toolbar btn-convert" value="convert" onClick={this.props.handleButtonPress}><FaRetweet className="fa"/></button>
+        <button className="btn-toolbar btn-mode" value="mode" onClick={this.props.handleButtonPress}><FaAtom className="fa"/></button>
+        <button className="btn-toolbar btn-backspace" value="backspace" onClick={this.props.handleButtonPress}><FaBackspace className="fa"/></button>
       </div>
     );
   }
@@ -35,26 +35,26 @@ class Inputs extends React.Component {
   render() {
     return (
       <div className="inputs">
-        <button className="btn-input" value="C"onClick={this.props.handleButtonPress}>C</button>
+        <button className="btn-input" value="C" onClick={this.props.handleButtonPress}>C</button>
         <button className="btn-input" value="( )" onClick={this.props.handleButtonPress}>( )</button>
-        <button className="btn-input" value="%"onClick={this.props.handleButtonPress}>%</button>
-        <button className="btn-input" value="/"onClick={this.props.handleButtonPress}>/</button>
-        <button className="btn-input" value="7"onClick={this.props.handleButtonPress}>7</button>
-        <button className="btn-input" value="8"onClick={this.props.handleButtonPress}>8</button>
-        <button className="btn-input" value="9"onClick={this.props.handleButtonPress}>9</button>
-        <button className="btn-input" value="*"onClick={this.props.handleButtonPress}>*</button>
-        <button className="btn-input" value="4"onClick={this.props.handleButtonPress}>4</button>
-        <button className="btn-input" value="5"onClick={this.props.handleButtonPress}>5</button>
-        <button className="btn-input" value="6"onClick={this.props.handleButtonPress}>6</button>
-        <button className="btn-input" value="-"onClick={this.props.handleButtonPress}>-</button>
-        <button className="btn-input" value="1"onClick={this.props.handleButtonPress}>1</button>
-        <button className="btn-input" value="2"onClick={this.props.handleButtonPress}>2</button>
-        <button className="btn-input" value="3"onClick={this.props.handleButtonPress}>3</button>
-        <button className="btn-input" value="+"onClick={this.props.handleButtonPress}>+</button>
-        <button className="btn-input" value="+/-"onClick={this.props.handleButtonPress}>+/-</button>
-        <button className="btn-input" value="0"onClick={this.props.handleButtonPress}>0</button>
-        <button className="btn-input" value="."onClick={this.props.handleButtonPress}>.</button>
-        <button className="btn-input" value="="onClick={this.props.handleButtonPress}>=</button>
+        <button className="btn-input" value="%" onClick={this.props.handleButtonPress}>%</button>
+        <button className="btn-input" value="÷" onClick={this.props.handleButtonPress}>÷</button>
+        <button className="btn-input" value="7" onClick={this.props.handleButtonPress}>7</button>
+        <button className="btn-input" value="8" onClick={this.props.handleButtonPress}>8</button>
+        <button className="btn-input" value="9" onClick={this.props.handleButtonPress}>9</button>
+        <button className="btn-input" value="*" onClick={this.props.handleButtonPress}>*</button>
+        <button className="btn-input" value="4" onClick={this.props.handleButtonPress}>4</button>
+        <button className="btn-input" value="5" onClick={this.props.handleButtonPress}>5</button>
+        <button className="btn-input" value="6" onClick={this.props.handleButtonPress}>6</button>
+        <button className="btn-input" value="-" onClick={this.props.handleButtonPress}>-</button>
+        <button className="btn-input" value="1" onClick={this.props.handleButtonPress}>1</button>
+        <button className="btn-input" value="2" onClick={this.props.handleButtonPress}>2</button>
+        <button className="btn-input" value="3" onClick={this.props.handleButtonPress}>3</button>
+        <button className="btn-input" value="+" onClick={this.props.handleButtonPress}>+</button>
+        <button className="btn-input" value="+/-" onClick={this.props.handleButtonPress}>+/-</button>
+        <button className="btn-input" value="0" onClick={this.props.handleButtonPress}>0</button>
+        <button className="btn-input" value="." onClick={this.props.handleButtonPress}>.</button>
+        <button className="btn-input" value="=" onClick={this.props.handleButtonPress}>=</button>
       </div>
     );
   }
@@ -86,7 +86,7 @@ class Calculator extends React.Component {
     this.handleButtonPress = this.handleButtonPress.bind(this);
   }
   
-  processInput() {
+  processInput(exp) {
     // first pass for parentheses, second for division/multiplication, final pass fir addition/substraction. All left to right.
   }
   
@@ -127,13 +127,17 @@ class Calculator extends React.Component {
           decimalUsed: true,
         });
         break;
-      case '+': case '-': case '*': case '/':
+      case '+': case '-': case '*': case '÷':
+        // * Minus needs to be altered to pass freecodecamp test. *
         // Operators are replaced with new ones when they are input in succession.
-        if (this.state.lastKey === "*" || this.state.lastKey === "/" || this.state.lastKey === "+" || this.state.lastKey === "-") {
+        if (this.state.lastKey === "*" || this.state.lastKey === "÷" || this.state.lastKey === "+" || this.state.lastKey === "-") {
           this.setState({
             input: this.state.input.slice(0, this.state.input.length - 1) + keyPressed,
             lastKey: keyPressed,
           });
+          return;
+        }
+        if (this.state.input === "0") {
           return;
         }
         this.setState({
@@ -142,14 +146,66 @@ class Calculator extends React.Component {
         });
         break;
       case 'C':
-        break;
+        this.setState({
+          input: "0",
+          lastKey: "0",
+          leftParenthesis: false,
+          doubleZeroOkay: false,
+          decimalUsed: false,
+        })
+        return;
       case "( )":
-        break;
+        var lastKey = this.state.lastKey;
+        if (this.state.leftParenthesis) {
+          if (lastKey === "+" || lastKey === "-" || lastKey === "*" || lastKey === "÷" || lastKey === ".") {
+            return;
+          } else {
+            this.setState({
+              input: this.state.input + ")",
+              lastKey: ")",
+              leftParenthesis: false,
+            });
+            return;
+          }
+        }
+        if (lastKey === "+" || lastKey === "-" || lastKey === "*" || lastKey === "÷") {
+          this.setState({
+            input: this.state.input + "(",
+            lastKey: "(",
+            leftParenthesis: true,
+          })
+          return;
+        }
+        return;
       case "%":
-
+        var lastKey = this.state.lastKey;
+        if (lastKey === "+" || lastKey === "-" || lastKey === "*" || lastKey === "÷" || lastKey === "." || lastKey === "(" || lastKey === ")") {
+          return;
+        }
+        break;
       case "+/-":
-
+        var lastKey = this.state.lastKey;
+        if (lastKey === "+" || lastKey === "-" || lastKey === "*" || lastKey === "÷" || lastKey === "." || lastKey === "(" || lastKey === ")") {
+          return;
+        } else {
+          var input = this.state.input;
+          this.setState({
+            input: input.slice(0, input.length - 1) + "˗" + input.slice(input.length - 1, input.length ),
+            lastKey: input.slice(input.length),
+          });
+          return;
+        }
       case "=":
+        var result = this.processInput(this.state.input);
+        this.setState({
+          input: "0",
+          inputHistory: this.state.inputHistory.concat(result),
+          lastKey: "0",
+          leftParenthesis: false,
+          doubleZeroOkay: false,
+          decimalUsed: false,
+        })
+        return;
     }
     this.setState({
       input: this.state.input + keyPressed,
