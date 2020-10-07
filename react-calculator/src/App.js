@@ -10,7 +10,7 @@ class Display extends React.Component {
           {this.props.input}
         </div>
         <div className="display-result">
-          null
+          {this.props.lastResult}
         </div>
       </div>
     );
@@ -79,7 +79,7 @@ class Calculator extends React.Component {
       lastResult: "0",
       inputHistory: [],
       lastKey: "0",
-      leftParenthesis: false,
+      leftParenthesis: 0,
       doubleZeroOkay: false,
       decimalUsed: false,
       // This is false after an operator has been entered and true upon the first nonzero int
@@ -100,7 +100,7 @@ class Calculator extends React.Component {
 
   findOperatorToRight(exp, leftIndex) {
     var rightIndex;
-    const pattern = /[+\-*÷˗(]/gm;
+    const pattern = /[+\-*÷˗)]/gm;
     for (rightIndex = leftIndex + 1; rightIndex < exp.length; rightIndex++) {
       if (pattern.test(exp.charAt(rightIndex))) {
         break;
@@ -147,11 +147,10 @@ class Calculator extends React.Component {
       }
       multiplyIndex = exp.indexOf("*");
     }
-    alert(exp);
     return exp;
   }
 
-  // * ((7+8)-(6+1))
+  // * ((7+8)(6+1))
 
   processInput(expression) {
     var exp = this.simplifyPercents(expression);
@@ -160,7 +159,7 @@ class Calculator extends React.Component {
     var i;
     while (rightParenthesisIndex > 0) {
       while (true) {
-        i = exp.indexOf("(", leftParenthesisIndex);
+        i = exp.indexOf("(", leftParenthesisIndex + 1);
         if (i < 0 || i > rightParenthesisIndex) {
           break;
         } else {
@@ -173,7 +172,6 @@ class Calculator extends React.Component {
       leftParenthesisIndex = exp.indexOf("(");
     }
     return this.simplifyExpression(exp);
-    // first pass for parentheses, second for division/multiplication, final pass fir addition/substraction. All left to right.
   }
   
   handleButtonPress(e) {
@@ -187,6 +185,14 @@ class Calculator extends React.Component {
         }
         break;
       case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case'9':
+        if (this.state.lastKey === ")") {
+          this.setState({
+            input: this.state.input + "*" + keyPressed,
+            lastKey: keyPressed,
+            doubleZeroOkay: true,
+          });
+          return;
+        }
         // Replaces the zero in contexts where the zero is unnecessary.
         if (this.state.lastKey === "0" && !this.state.doubleZeroOkay) {
           var editedInput = this.state.input.slice(0, this.state.input.length - 1)
@@ -216,6 +222,7 @@ class Calculator extends React.Component {
       case '+': case '-': case '*': case '÷':
         // * Minus needs to be altered to pass freecodecamp test. *
         // Operators are replaced with new ones when they are input in succession.
+        // * Condition here for when there's a 0 and a past result.
         if (this.state.lastKey === "*" || this.state.lastKey === "÷" || this.state.lastKey === "+" || this.state.lastKey === "-") {
           this.setState({
             input: this.state.input.slice(0, this.state.input.length - 1) + keyPressed,
@@ -236,7 +243,7 @@ class Calculator extends React.Component {
           input: "0",
           lastResult: "0",
           lastKey: "0",
-          leftParenthesis: false,
+          leftParenthesis: 0,
           doubleZeroOkay: false,
           decimalUsed: false,
         })
@@ -247,17 +254,23 @@ class Calculator extends React.Component {
           this.setState({
             input: "(",
             lastKey: "(",
-            leftParenthesis: true,
+            leftParenthesis: this.state.leftParenthesis + 1,
           })
         }
-        if (this.state.leftParenthesis) {
+        if (this.state.leftParenthesis > 0) {
           if (lastKey === "+" || lastKey === "-" || lastKey === "*" || lastKey === "÷" || lastKey === ".") {
             return;
+          } else if (lastKey === "(") {
+            this.setState({
+              input: this.state.input + "(",
+              lastKey: "(",
+              leftParenthesis: this.state.leftParenthesis + 1,
+            })
           } else {
             this.setState({
               input: this.state.input + ")",
               lastKey: ")",
-              leftParenthesis: false,
+              leftParenthesis: this.state.leftParenthesis - 1,
             });
             return;
           }
@@ -266,7 +279,7 @@ class Calculator extends React.Component {
           this.setState({
             input: this.state.input + "(",
             lastKey: "(",
-            leftParenthesis: true,
+            leftParenthesis: this.state.leftParenthesis + 1,
           })
           return;
         }
@@ -290,14 +303,19 @@ class Calculator extends React.Component {
           return;
         }
       case "=":
-        var result = this.processInput(this.state.input);
-        // alert(result);
+        var parentheses = "";
+        if (this.state.leftParenthesis > 0) {
+          for (var i = this.state.leftParenthesis; i > 0; i--) {
+            parentheses = parentheses + ")";
+          }
+        }
+        var result = this.processInput(this.state.input +  parentheses);
         this.setState({
           input: "0",
           lastResult: result,
           inputHistory: this.state.inputHistory.concat(result),
           lastKey: "0",
-          leftParenthesis: false,
+          leftParenthesis: 0,
           doubleZeroOkay: false,
           decimalUsed: false,
         })
@@ -312,7 +330,7 @@ class Calculator extends React.Component {
   render() {
     return (
       <div className="calculator">
-        <Display input={this.state.input}/>
+        <Display input={this.state.input} lastResult={this.state.lastResult}/>
         <Toolbar handleButtonPress={this.handleButtonPress}/>
         <Inputs handleButtonPress={this.handleButtonPress}/>
       </div>
