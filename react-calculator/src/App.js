@@ -89,9 +89,15 @@ class Calculator extends React.Component {
 
   findOperatorToLeft(exp, rightIndex) {
     var leftIndex;
-    const pattern = /[+\-*÷˗(]/gm;
+    const pattern = /[+\-*÷(]/gm;
     for (leftIndex = rightIndex - 1; leftIndex >= 0; leftIndex--) {
       if (pattern.test(exp.charAt(leftIndex))) {
+        if (leftIndex === 0) {
+          return -1;
+        }
+        if (pattern.test(exp.charAt(leftIndex - 1))) {
+          return leftIndex - 1;
+        }
         break;
       }
     }
@@ -100,8 +106,8 @@ class Calculator extends React.Component {
 
   findOperatorToRight(exp, leftIndex) {
     var rightIndex;
-    const pattern = /[+\-*÷˗)]/gm;
-    for (rightIndex = leftIndex + 1; rightIndex < exp.length; rightIndex++) {
+    const pattern = /[+\-*÷)]/gm;
+    for (rightIndex = leftIndex + 2; rightIndex < exp.length; rightIndex++) {
       if (pattern.test(exp.charAt(rightIndex))) {
         break;
       }
@@ -128,25 +134,52 @@ class Calculator extends React.Component {
     return exp;
   }
   
-  simplifyExpression(expression) {
+  computeWithOperator(expression, operator) {
     var exp = expression.slice(0);
-    var multiplyIndex = exp.indexOf("*");
-    while (multiplyIndex > 0) {
+    var operatorIndex = exp.indexOf(operator);
+    if (operator === "-" && operatorIndex === 0) {
+      operatorIndex = exp.indexOf(operator, 1);
+    }
+    while (operatorIndex > 0) {
       var firstOperand;
-      var leftIndex = this.findOperatorToLeft(exp, multiplyIndex);
+      var leftIndex = this.findOperatorToLeft(exp, operatorIndex);
       firstOperand = parseFloat(exp.slice(leftIndex + 1));
 
-      var secondOperand = parseFloat(exp.slice(multiplyIndex + 1));
-      var result = firstOperand * secondOperand;
-      var rightIndex = this.findOperatorToRight(exp, multiplyIndex);
+      var secondOperand = parseFloat(exp.slice(operatorIndex + 1));
+      var result;
+      switch(operator) {
+        case "+":
+          result = firstOperand + secondOperand;
+          break;
+        case "-":
+          result = firstOperand - secondOperand;
+          break;
+        case "*":
+          result = firstOperand * secondOperand;
+          break;
+        case "÷":
+          result = firstOperand / secondOperand;
+          break;
+      }
+
+      var rightIndex = this.findOperatorToRight(exp, operatorIndex);
 
       if (rightIndex !== -1) {
         exp = exp.slice(0, leftIndex + 1) + result + exp.slice(rightIndex);
       } else {
         exp = exp.slice(0, leftIndex + 1) + result;
       }
-      multiplyIndex = exp.indexOf("*");
+      operatorIndex = exp.indexOf(operator);
     }
+    return exp;
+  }
+
+  simplifyExpression(expression) {
+    var exp = expression.slice(0);
+    exp = this.computeWithOperator(exp, "*");
+    exp = this.computeWithOperator(exp, "÷");
+    exp = this.computeWithOperator(exp, "+");
+    exp = this.computeWithOperator(exp, "-");
     return exp;
   }
 
@@ -223,6 +256,13 @@ class Calculator extends React.Component {
         // * Minus needs to be altered to pass freecodecamp test. *
         // Operators are replaced with new ones when they are input in succession.
         // * Condition here for when there's a 0 and a past result.
+        if (this.state.input === "0") {
+          this.setState({
+            input: this.state.lastResult + keyPressed,
+            lastKey: keyPressed,
+
+          })
+        }
         if (this.state.lastKey === "*" || this.state.lastKey === "÷" || this.state.lastKey === "+" || this.state.lastKey === "-") {
           this.setState({
             input: this.state.input.slice(0, this.state.input.length - 1) + keyPressed,
@@ -294,15 +334,26 @@ class Calculator extends React.Component {
         var lastKey = this.state.lastKey;
         if (lastKey === "+" || lastKey === "-" || lastKey === "*" || lastKey === "÷" || lastKey === "." || lastKey === "(" || lastKey === ")") {
           return;
-        } else {
-          var input = this.state.input;
-          this.setState({
-            input: input.slice(0, input.length - 1) + "˗" + input.slice(input.length - 1, input.length ),
-            lastKey: input.slice(input.length),
-          });
+        }
+        var operatorIndex = this.findOperatorToLeft(this.state.input, this.state.input.length - 1);
+        if(this.state.input.charAt(operatorIndex) === "-") {
+          if (this.state.input.charAt(this.findOperatorToLeft(this.state.input, this.state.input.length - 2)) === "-") {
+            this.setState({
+              input: this.state.input.slice(0, operatorIndex) + this.state.input.slice(-1),
+            });
+            return;
+          }
+        }
+        var input = this.state.input;
+        this.setState({
+          input: input.slice(0, input.length - 1) + "-" + input.slice(input.length - 1, input.length ),
+          lastKey: input.slice(input.length),
+        });
+        return;
+      case "=":
+        if (this.state.lastKey === "*" || this.state.lastKey === "÷" || this.state.lastKey === "+" || this.state.lastKey === "-") {
           return;
         }
-      case "=":
         var parentheses = "";
         if (this.state.leftParenthesis > 0) {
           for (var i = this.state.leftParenthesis; i > 0; i--) {
