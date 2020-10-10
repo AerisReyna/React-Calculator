@@ -21,10 +21,10 @@ class Toolbar extends React.Component {
   render() {
     return (
       <div className="toolbar">
-        <button className="btn-toolbar btn-settings" name="settings" value="settings" onClick={this.props.handleButtonPress}><FaCog className="fa"/></button>
+        {/* <button className="btn-toolbar btn-settings" name="settings" value="settings" onClick={this.props.handleButtonPress}><FaCog className="fa"/></button>
         <button className="btn-toolbar btn-history" value="history" onClick={this.props.handleButtonPress}><FaHistory className="fa"/></button>
         <button className="btn-toolbar btn-convert" value="convert" onClick={this.props.handleButtonPress}><FaRetweet className="fa"/></button>
-        <button className="btn-toolbar btn-mode" value="mode" onClick={this.props.handleButtonPress}><FaAtom className="fa"/></button>
+        <button className="btn-toolbar btn-mode" value="mode" onClick={this.props.handleButtonPress}><FaAtom className="fa"/></button> */}
         <button className="btn-toolbar btn-backspace" value="backspace" onClick={this.props.handleButtonPress}><FaBackspace className="fa"/></button>
       </div>
     );
@@ -77,7 +77,7 @@ class Calculator extends React.Component {
     this.state = {
       input: "0",
       lastResult: "0",
-      inputHistory: [],
+      stateHistory: [],
       lastKey: "0",
       leftParenthesis: 0,
       doubleZeroOkay: false,
@@ -223,6 +223,7 @@ class Calculator extends React.Component {
             input: this.state.input + "*" + keyPressed,
             lastKey: keyPressed,
             doubleZeroOkay: true,
+            stateHistory: this.state.stateHistory.concat(this.state),
           });
           return;
         }
@@ -233,6 +234,7 @@ class Calculator extends React.Component {
             input: editedInput + keyPressed,
             lastKey: keyPressed,
             doubleZeroOkay: true,
+            stateHistory: this.state.stateHistory.concat(this.state),
           });
           // Returns here because this is different than default behavior.
           return;
@@ -260,13 +262,13 @@ class Calculator extends React.Component {
           this.setState({
             input: this.state.lastResult + keyPressed,
             lastKey: keyPressed,
-
           })
         }
         if (this.state.lastKey === "*" || this.state.lastKey === "÷" || this.state.lastKey === "+" || this.state.lastKey === "-") {
           this.setState({
             input: this.state.input.slice(0, this.state.input.length - 1) + keyPressed,
             lastKey: keyPressed,
+            stateHistory: this.state.stateHistory.concat(this.state),
           });
           return;
         }
@@ -286,6 +288,7 @@ class Calculator extends React.Component {
           leftParenthesis: 0,
           doubleZeroOkay: false,
           decimalUsed: false,
+          stateHistory: [],
         })
         return;
       case "( )":
@@ -295,22 +298,23 @@ class Calculator extends React.Component {
             input: "(",
             lastKey: "(",
             leftParenthesis: this.state.leftParenthesis + 1,
+            stateHistory: this.state.stateHistory.concat(this.state),
           })
         }
         if (this.state.leftParenthesis > 0) {
-          if (lastKey === "+" || lastKey === "-" || lastKey === "*" || lastKey === "÷" || lastKey === ".") {
-            return;
-          } else if (lastKey === "(") {
+          if (lastKey === "+" || lastKey === "-" || lastKey === "*" || lastKey === "÷" || lastKey === "." || lastKey === "(") {
             this.setState({
               input: this.state.input + "(",
               lastKey: "(",
               leftParenthesis: this.state.leftParenthesis + 1,
+              stateHistory: this.state.stateHistory.concat(this.state),
             })
           } else {
             this.setState({
               input: this.state.input + ")",
               lastKey: ")",
               leftParenthesis: this.state.leftParenthesis - 1,
+              stateHistory: this.state.stateHistory.concat(this.state),
             });
             return;
           }
@@ -320,6 +324,7 @@ class Calculator extends React.Component {
             input: this.state.input + "(",
             lastKey: "(",
             leftParenthesis: this.state.leftParenthesis + 1,
+            stateHistory: this.state.stateHistory.concat(this.state),
           })
           return;
         }
@@ -340,6 +345,7 @@ class Calculator extends React.Component {
           if (this.state.input.charAt(this.findOperatorToLeft(this.state.input, this.state.input.length - 2)) === "-") {
             this.setState({
               input: this.state.input.slice(0, operatorIndex) + this.state.input.slice(-1),
+              stateHistory: this.state.stateHistory.push(this.state),
             });
             return;
           }
@@ -348,6 +354,7 @@ class Calculator extends React.Component {
         this.setState({
           input: input.slice(0, input.length - 1) + "-" + input.slice(input.length - 1, input.length ),
           lastKey: input.slice(input.length),
+          stateHistory: this.state.stateHistory.push(this.state),
         });
         return;
       case "=":
@@ -364,17 +371,34 @@ class Calculator extends React.Component {
         this.setState({
           input: "0",
           lastResult: result,
-          inputHistory: this.state.inputHistory.concat(result),
+          stateHistory: [],
           lastKey: "0",
           leftParenthesis: 0,
           doubleZeroOkay: false,
           decimalUsed: false,
         })
         return;
-    }
+      case "backspace":
+        var oldState = this.state.stateHistory.pop();
+        if(oldState === undefined) {
+          return;
+        }
+        this.setState({
+          input: oldState.input,
+          lastResult: oldState.lastResult,
+          stateHistory: oldState.stateHistory,
+          lastKey: oldState.lastKey,
+          leftParenthesis: oldState.leftParenthesis,
+          doubleZeroOkay: oldState.doubleZeroOkay,
+          decimalUsed: oldState.decimalUsed,
+        })
+        return;
+      }
     this.setState({
       input: this.state.input + keyPressed,
       lastKey: keyPressed,
+      stateHistory: this.state.stateHistory.concat(this.state),
+      
     });
   }
 
